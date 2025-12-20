@@ -1,8 +1,8 @@
 from new_srt_parser import TextEntry, parse_srt_file
 from dataclasses import dataclass
+import janome.tokenizer as t
 from pathlib import Path
 import sqlite3
-import fugashi
 import re
 
 
@@ -18,6 +18,12 @@ class WordEntry:
 	end: str
 	season: int
 	episode: int
+
+def tokenize(string: str) -> list[str]:
+	return [
+		token.surface if isinstance(token, t.Token) else token 
+		for token in t.Tokenizer().tokenize(string)
+		]
 
 def ready_database(db_path: str):
 	conn = sqlite3.connect(db_path)
@@ -80,8 +86,7 @@ def search(
 	conn = sqlite3.connect(db_path)
 	c = conn.cursor()
 
-	splitter = fugashi.Tagger() #type: ignore
-	splitted_search: list[str] = splitter(search)
+	splitted_search: list[str] = tokenize(search)
 
 	querry = f"""
 	SELECT DISTINCT s.*
@@ -156,8 +161,6 @@ def get_metadata(srt_path, root_path) -> dict:
 
 def build_index(root_path: str = COMMON_SUB_PATH) -> list[WordEntry]:
 	index: list[WordEntry] = []
-
-	splitter = fugashi.Tagger() #type: ignore
 	
 	# what needs to be done:
 	# 1. get all srt file directorys
@@ -176,7 +179,7 @@ def build_index(root_path: str = COMMON_SUB_PATH) -> list[WordEntry]:
 		metadata = get_metadata(file, root_path)
 
 		for tex in text_entries:
-			words = splitter(tex.text)
+			words = tokenize(tex.text)
 
 			for word in words:
 				index.append(WordEntry(
