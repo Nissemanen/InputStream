@@ -17,6 +17,12 @@ function highlightText(text, tokens) {
 	return text.replace(regex, `<span class="result-match">$1</span>`);
 }
 
+async function loadPage() {
+	const data = await getData(currentPage, currentPerPage);
+	displayResults(data.results, data.query_tokens);
+	displayPagination(data);
+}
+
 async function getData(page, perPage) {
 	const response = await fetch("/search", {
 		method: "POST",
@@ -85,12 +91,6 @@ function displayPagination(data) {
 		};
 		paginationContainer.appendChild(nextButton);
 	}
-}
-
-async function loadPage() {
-	const data = await getData(currentPage, currentPerPage);
-	displayResults(data.results, data.query_tokens);
-	displayPagination(data);
 }
 
 searchForm.addEventListener("submit", async event => {
