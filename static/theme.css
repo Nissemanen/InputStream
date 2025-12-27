@@ -5,7 +5,7 @@
 	--surface-a0: #121212;
 	--surface-a10: #282828;
 	--surface-a20: #3f3f3f;
-	--surface-a30: #645c5c;
+	--surface-a30: #887d7d;
 	--text-color: white;
 	--text-small: #aaa;
 }
@@ -17,7 +17,11 @@
 	font-family: system, sans-serif;
 }
 
-hr { margin: 0.5em; }
+hr { 
+	margin: 0.5em;
+	background-color: var(--primary-a0);
+	color: var(--primary-a0);
+}
 h1 {
 	margin: 0.67em 0;
 	color: var(--primary-a0);

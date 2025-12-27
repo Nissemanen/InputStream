@@ -23,7 +23,12 @@ function highlightText(text, tokens) {
 async function loadPage() {
 	const data = await getData(currentPage, currentPerPage);
 	displayResults(data.results, data.query_tokens);
-	displayPagination(data);
+	console.log("length:", resultsContainer.length);
+	console.log("container:", resultsContainer);
+
+	paginationContainer.innerHTML = "";
+	if(resultsContainer.innerHTML != "") displayPagination(data);
+	else displayNothingFound();
 }
 
 async function getData(page, perPage) {
@@ -70,7 +75,6 @@ function displayResults(results, tokens) {
 }
 
 function displayPagination(data) {
-	paginationContainer.innerHTML = "";
 	if (currentPage > 1) {
 		const prevButton = document.createElement("button");
 		prevButton.textContent = "Previous";
@@ -102,4 +106,35 @@ searchForm.addEventListener("submit", async event => {
 	currentPage = 1;
 
 	loadPage();
+	setStateOfUrl(currentQuery, currentPage, currentPerPage);
 });
+
+window.addEventListener("DOMContentLoaded", async () => {
+	const url = new URLSearchParams(window.location.search);
+
+	currentQuery = url.get("q") || "";
+	currentPage = parseInt(url.get("page")) || 1;
+	currentPerPage = parseInt(url.get("perPage")) || 20;
+
+	searchQuery.value = currentQuery;
+	loadPage()
+});
+
+function setStateOfUrl(query, page, perPage) {
+	const url = new URL(window.location);
+
+	if (query) url.searchParams.set("q", query);
+	else url.searchParams.delete("q");
+
+	if (page) url.searchParams.set("page", page);
+	else url.searchParams.delete("page");
+
+	if (perPage) url.searchParams.set("perPage", perPage);
+	else url.searchParams.delete("perPage");
+
+	window.history.pushState({}, "", url);
+}
+
+function displayNothingFound() {
+	resultsContainer.innerHTML = `<p>Nothing found when searching for "${currentQuery}"`
+}

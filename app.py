@@ -8,15 +8,18 @@ app = flask.Flask(__name__)
 def index():
 	return flask.render_template('index.html')
 
-@app.route('/search', methods=['POST'])
+@app.route('/search', methods=['POST', 'GET'])
 def do_search():
+	if flask.request.method == 'GET':
+		return flask.redirect("/")
+	
 	print("===")
 	query = flask.request.json['query']
 	page = flask.request.json.get("page", 1)
 	per_page = flask.request.json.get("per_page", 20)
 	print(f"doing {query}")
 	print(f"splitted: {tokenize(query)}")
-	results = search(query)
+	results: list = search(query)
 
 	results_list = [
 		{
