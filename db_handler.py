@@ -234,6 +234,12 @@ def build_on_database(root_path: str = COMMON_SUB_PATH, db_path: str = COMMON_DB
 	conn.commit()
 	conn.close()
 
+def give_furigana(text:str) -> str:
+	# for anyone who doesnt know what furigana is,
+	# its when some complicated characters (called kanji)
+	# get some easier characters (called kana) above them
+	# if you dont know the reading of a character
+	pass
 
 if __name__ == "__main__":
 	

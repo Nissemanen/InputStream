@@ -8,6 +8,9 @@ let currentQuery = "";
 let currentPerPage = 20;
 
 // I have no idea what this is.
+
+// its to highlight wherever the searched word is in the found text, 
+// dunno why i chose to do that in the frontend though - nisse
 function highlightText(text, tokens) {
 	if (!tokens || tokens.length === 0) return text;
 
@@ -53,9 +56,9 @@ function displayResults(results, tokens) {
 				<span class="result-title">${result.show}</span>
 				<span>Season ${result.season}, Episode ${result.episode}</span>
 			</h3>
-			<p class="result-text">
+			<p class="result-text"><span lang="ja-jp">
 				${highlightText(result.text, tokens)}
-			</p>
+			</span></p>
 			<small class="result-time">
 				(from
 					<time datetime="${isoStart}">${result.start}</time>

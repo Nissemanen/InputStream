@@ -24,10 +24,9 @@
 	flex-direction: column;
 	align-items: center;
 	width: 100%;
+	text-align: center;
+	transform: translateY(calc((50vh - 80px) - 50% - 8px));
 }
-
-/* 80px is the header height */
-.hero { transform: translateY(calc((50vh - 80px) - 50% - 8px)); }
 
 main {
 	position: relative;
@@ -65,3 +64,19 @@ main:has(.results:empty) .hero {
 .result-match { background: var(--primary-a0); }
 .result-text { padding-left: 16px; }
 .result-time { color: var(--text-small); }
+
+::-webkit-scrollbar {
+	width: 10px;
+}
+
+::-webkit-scrollbar-track {
+	background: var(--surface-a30);
+}
+
+::-webkit-scrollbar-thumb {
+	background: var(--primary-a20);
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: var(--primary-a10);
+}
