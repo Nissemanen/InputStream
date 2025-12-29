@@ -41,5 +41,9 @@ def do_search():
 
 	return flask.jsonify({"results": return_list, "has_more": (len(results_list)-per_page*page)/20 > 0, "query_tokens": [token for token in tokenize(query)]})
 
+@app.route("/results")
+def results_redirect():
+	return flask.render_template("index.html")
+
 if __name__ == "__main__":
 	app.run(debug=True)

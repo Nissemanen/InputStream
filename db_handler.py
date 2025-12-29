@@ -116,6 +116,7 @@ def search(
 		querry += f" AND s.episode IN ({', '.join(['?' for i in range(len(episodes))])})"
 		parameters += episodes
 
+	print(f"log:\n	querry: {querry}\n	parameters: {parameters}")
 	c.execute(querry, parameters)
 
 	results_unstructured = c.fetchall()
@@ -135,16 +136,7 @@ def search(
 	return results
 
 def get_metadata(srt_path, root_path) -> dict:
-	# what needs
-	# 1. get the relative path
-	# 2. get show name/season
-	# 3. get episode number
-
-	# 1. relative
 	relative_path = Path(srt_path).relative_to(root_path)
-
-	# 2. get show name/season
-
 	show_match = re.match(r"([^(]+)\(?(\d+)?\)?", str(relative_path.parent))
 
 	if not show_match:
@@ -161,17 +153,9 @@ def get_metadata(srt_path, root_path) -> dict:
 def build_index(root_path: str = COMMON_SUB_PATH) -> list[WordEntry]:
 	index: list[WordEntry] = []
 	
-	# what needs to be done:
-	# 1. get all srt file directorys
-	# 2. loop through each, parsing the file and getting metadata
-	# 3. add to index as a WordEntry
-
-	# 1. get all srt file directorys
 	subtitle_dir = Path(root_path)
-
 	srt_files = list(subtitle_dir.rglob("*.srt"))
 
-	# 2. loop through each, parsing the file and getting metadata
 	for file in srt_files:
 		text_entries = parse_srt_file(str(file))
 
@@ -238,7 +222,7 @@ def give_furigana(text:str) -> str:
 	# for anyone who doesnt know what furigana is,
 	# its when some complicated characters (called kanji)
 	# get some easier characters (called kana) above them
-	# if you dont know the reading of a character
+	# incase you dont know the reading of a character
 	pass
 
 if __name__ == "__main__":
