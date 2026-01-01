@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from pathlib import Path
+import time
 import re
 
 @dataclass
@@ -10,7 +11,7 @@ class TextEntry:
 	end: str
 
 def parse_srt_block(srt_block: str) -> TextEntry|None:
-	srt_match = re.search(r'(.+)\n(\d\d:\d\d:\d\d,\d\d\d)\s*-->\s*(\d\d:\d\d:\d\d,\d\d\d)\n+(.*)', srt_block.strip())
+	srt_match = re.search(r'(.+)\n(\d\d:\d\d:\d\d,\d\d\d)\s*-->\s*(\d\d:\d\d:\d\d,\d\d\d)\n+([\w\W]*)', srt_block.strip())
 
 	if not srt_match:
 		print(f"ValueError: Srt block doesnt match the srt format, double check it:\n{srt_block}\n---\n{repr(srt_block)}")
@@ -22,7 +23,6 @@ def parse_srt_file(file_path: str) -> list[TextEntry]:
 	if not Path(file_path).exists():
 		raise ValueError(f'Path "{file_path}" doesnt exist, double check the path')
 	
-	print(f"parsing file: {file_path}")
 	with open(file_path, 'r', encoding="utf-8-sig") as f:
 		file_contence = f.read()
 
@@ -37,5 +37,4 @@ def parse_srt_file(file_path: str) -> list[TextEntry]:
 	return result
 
 if __name__ == "__main__":
-	things = parse_srt_file("subtitles/Vinland Saga/1.srt")
-	[print(thing) for thing in things[:5]]
+	things = parse_srt_file("subtitles/1917/en/1.srt")

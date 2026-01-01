@@ -52,6 +52,8 @@ main:has(.results:empty) hr {
 
 main:has(.results:empty) .hero {
 	opacity: 1;
+	text-wrap: nonwrap;
+	overflow-x: clip;
 }
 
 .pagination {

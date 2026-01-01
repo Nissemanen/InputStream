@@ -11,24 +11,39 @@
 		<header>
 			<h1 id="headerText" class="headerText">InputStream</h1>
 		</header>
+		
+		<div class="pageContainer">
+			<menu class="filters">
+				<section class="filterSection">
+					<h3>Lanugage</h3>
+					<form id="langFilterForm" class="multiSelectCheckboxForm">
+						<input type="checkbox" id="jaLang" name="langs" value="ja" class="multiSelectCheckbox">
+						<label for="jaLang">Japanese</label>
+						<br>
+						<input type="checkbox" id="enLang" name="langs" value="en" class="multiSelectCheckbox">
+						<label for="enLang">English</label>
+					</form>
+				</section>
+			</menu>
 
-		<main>
-			<div class="hero">
-				<h2>InputStream</h2>
-				<p>InputStream is a powerful tool that searches through captions in all your favourite movies and videos.</p>
-			</div>
+			<main>
+				<div class="hero">
+					<h2>InputStream</h2>
+					<p>InputStream is a powerful tool that searches through captions in all your favourite movies and videos.</p>
+				</div>
 
-			<form id="searchForm" class="search" action="/search">
-				<input type="text" id="searchQuery" name="q" placeholder="Search..."> 
-				<button type="submit">Search</button>
-			</form>
+				<form id="searchForm" class="search">
+					<input type="text" id="searchQuery" name="q" placeholder="Search..."> 
+					<button type="submit">Search</button>
+				</form>
 
-			<hr>
+				<hr>
 
-			<ol id="results" class="results"></ol>
-			<div id="pagination" class="pagination"></div>
-		</main>
-
+				<ol id="results" class="results"></ol>
+				<div id="pagination" class="pagination"></div>
+			</main>
+		</div>
+		
 		<script src="{{ url_for('static', filename='script.js') }}"></script>
 	</body>
 </html>

@@ -14,38 +14,15 @@ let currentPage = 1;
 let currentQuery = "";
 let currentPerPage = 20;
 
-/** This adds an "highlight" to where the `tokens` are found in `text`
- * @param {string} text - A normal string
- * @param {string[]} tokens - An array of strings to match in `text`
- * @param {string} [customHighlight="<span class=\"result-match\">$1</span>"] - If you want to specify what to do with the match
- * @returns {string} returns a new string with every match within the set "highlight"
- */
-function highlightText(text, tokens, customHighlight=`<span class="result-match">$1</span>`) {
-	if (!tokens || tokens.length === 0) return text; // double check if there are any tokens
-
-	tokens.sort((a, b) => b.length - a.length); // sort the tokens from large -> small (so that the small ones dont take priority and "split" a larger match, eg: you check ["a", "av"] with "abc", you wold only match with "a", but with large to small it matches the "ab")
-	const regex = new RegExp(`(${tokens.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})`, "g"); // remove any single backslashes from the tokens just incase, so they dont ruin the regex. And then combine them with a bar for "or" opperation
-
-	return text.replace(regex, customHighlight); // returns the new string, replacing every match with the selected highlight method
-}
 
 /** simply "loads" the page. In reality it just changes the page based on the state */
 async function loadPage() {
-	if (currentQuery == "") { // here it checks if there is any search query. If not; "reload" the page without anything
+	if (currentQuery == "") {
 		paginationContainer.innerHTML = "";
 		displayResults();
-		pushUrlState("/", {});
 		return;
 	}
 
-	const [path, params] = getUrlState();
-
-	if (path == "/results") {
-		currentQuery = params.q || "";
-		currentPage = parseInt(params.page) || 1;
-		currentPerPage = parseInt(params.perPage) || 20;
-	}
-	
 	try { // incase something goes wrong
 		const data = await getData(currentPage, currentPerPage); // get the results from the search
 
@@ -55,8 +32,9 @@ async function loadPage() {
 		if(resultsContainer.innerHTML != "") displayPagination(data); // then display the pagination (if there should be any)
 		else displayNothingFound(); // otherwise display that there was no result
 	}
-	catch (error) {handleError(error);}
-	
+	catch (error) {
+		handleError(error);
+	}
 }
 
 /** gets the data for the current search
@@ -88,25 +66,31 @@ async function getData(page, perPage) {
  */
 function displayResults(results, tokens) {
 	resultsContainer.innerHTML = "";
-	if (results) results.forEach(result => {
+	if (results) results.forEach(entry => {
 		const item = document.createElement("li"); // creates a list item element
 
-		const isoStart = result.start.replace(",", ".")
-		const isoEnd = result.end.replace(",", ".");
+		const isoStart = entry.start.replace(",", ".")
+		const isoEnd = entry.end.replace(",", ".");
 
 		item.innerHTML = /* some things about this; the '<span lang="ja-jp">...' tells google "this is japanese btw" */`
 			<h3 class="result-name">
-				<span class="result-title">${result.show}</span>
-				<span>Season ${result.season}, Episode ${result.episode}</span>
+				<span class="result-title">${entry.show}</span>
+				${
+					entry.is_movie ?
+					`<span>Season ${entry.season}, Episode ${entry.episode}</span>` :
+					parseInt(entry.season) > 1 ? 
+					`<span>${entry.season}</span>` :
+					""
+				}
 			</h3>
-			<p class="result-text"><span lang="ja-jp">
-				${highlightText(result.text, tokens)}
+			<p class="result-text"><span lang="${entry.language}">
+				${entry.text}
 			</span></p>
 			<small class="result-time">
 				(from
-					<time datetime="${isoStart}">${result.start}</time>
+					<time datetime="${isoStart}">${entry.start}</time>
 				to
-					<time datetime="${isoEnd}">${result.end}</time>)
+					<time datetime="${isoEnd}">${entry.end}</time>)
 			</small>`;
 		resultsContainer.appendChild(item);
 	});
@@ -188,16 +172,16 @@ searchForm.addEventListener("submit", async event => {
 	currentQuery = searchQuery.value;
 	currentPage = 1;
 
-	pushUrlState("/results", {q: currentQuery, page: currentPage, perPage: currentPerPage}); //does what it says, pushes state without reloading the page
-
 	loadPage();
+	pushUrlState("/results", {q:currentQuery, page:currentPage, perPage:currentPerPage})
 });
 
-headerText.addEventListener("click", function (e) {
+headerText.addEventListener("click", function () {
 	searchQuery.value = "";
 	currentQuery = "";
 
 	loadPage();
+	pushUrlState("/", {});
 });
 
 window.addEventListener("DOMContentLoaded", async () => {

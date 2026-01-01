@@ -35,4 +35,4 @@ def extract_clip(start: str, end: str, show:str, season:int, episode: int, outpu
 	])
 
 if __name__ == "__main__":
-	print(get_new_times("00:00:45,628", "00:00:47,088", "Vinland Saga", 1, 1))
+	pass

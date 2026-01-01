@@ -47,13 +47,6 @@ body {
 	color: var(--text-color);
 }
 
-main {
-	flex: 1;
-	display: flex;
-	flex-direction: column;
-	overflow: hidden;
-}
-
 button {
 	border: none;
 	padding: 8px;
@@ -69,4 +62,29 @@ input[type=text] {
 	border-radius: 8px;
 	background: var(--surface-a20);
 	color: var(--text-color);
+}
+
+.pageContainer {
+	height: 100vh;
+	width: 100vw;
+	display: flex;
+	flex-direction: row;
+	flex: 1;
+}
+
+menu {
+	flex: 1;
+}
+
+main {
+	flex: 7;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+@media (max-width: 450px) {
+	.pageContainer {
+		flex-direction: column;
+	}
 }
