@@ -1,4 +1,4 @@
-from db_handler import search, WordEntry, tokenize
+from db_handler import search, WordEntry, tokenize, get_data, show_seasons
 import clip_extracter as clipper
 import flask
 import re
@@ -12,7 +12,7 @@ def generate_highlights(text: str, tokens: list[str], highlight_method: str = ""
 
 	tokens.sort(key=len)
 
-	print("("+'|'.join([tk.replace('\\', '\\\\') for tk in tokens])+")")
+	# print("("+'|'.join([tk.replace('\\', '\\\\') for tk in tokens])+")")
 
 	return re.sub(
 		"("+'|'.join([tk.lower().replace('\\', '\\\\') for tk in tokens])+")", 
@@ -24,7 +24,7 @@ def generate_highlights(text: str, tokens: list[str], highlight_method: str = ""
 
 @app.route("/")
 def index():
-	return flask.render_template('index.html')
+	return flask.render_template('index.html', data=get_data())
 
 @app.route('/search', methods=['POST', 'GET'])
 def do_search():
@@ -61,16 +61,24 @@ def do_search():
 
 	return_list = results_list[per_page * (page-1):per_page * page]
 
-	print(flask.jsonify(return_list))
-	print(f"{per_page * (page-1)}:{per_page * page}")
-	print(len(results_list))
+	# print(flask.jsonify(return_list))
+	# print(f"{per_page * (page-1)}:{per_page * page}")
+	# print(len(results_list))
 
 	return flask.jsonify(
-		{"results": return_list, "has_more": (len(results_list)-per_page*page)/20 > 0, "query_tokens": tokenized})
+		{
+			"results": return_list, 
+			"has_more": (len(results_list)-per_page*page)/20 > 0, 
+			"season_amounts": {
+				show:show_seasons(show) # this just uses the unique names in the set below
+				for show in {entry["show"] for entry in return_list} # this gets every unique show name in a set
+				}
+		}
+	)
 
 @app.route("/results")
 def results_redirect():
-	return flask.render_template("index.html")
+	return flask.render_template("index.html", data=get_data())
 
 if __name__ == "__main__":
 	app.run(debug=True)

@@ -13,18 +13,7 @@
 		</header>
 		
 		<div class="pageContainer">
-			<menu class="filters">
-				<section class="filterSection">
-					<h3>Lanugage</h3>
-					<form id="langFilterForm" class="multiSelectCheckboxForm">
-						<input type="checkbox" id="jaLang" name="langs" value="ja" class="multiSelectCheckbox">
-						<label for="jaLang">Japanese</label>
-						<br>
-						<input type="checkbox" id="enLang" name="langs" value="en" class="multiSelectCheckbox">
-						<label for="enLang">English</label>
-					</form>
-				</section>
-			</menu>
+			<menu id="filters" class="filters"></menu>
 
 			<main>
 				<div class="hero">
@@ -44,6 +33,7 @@
 			</main>
 		</div>
 		
+		<script>const BACKENDDATA = {{ data | tojson  }};</script>
 		<script src="{{ url_for('static', filename='script.js') }}"></script>
 	</body>
 </html>

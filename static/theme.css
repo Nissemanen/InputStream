@@ -3,6 +3,7 @@
 	--primary-a10: #e15263;
 	--primary-a20: #e86a75;
 	--surface-a0: #121212;
+	--surface-a05: #202020;
 	--surface-a10: #282828;
 	--surface-a20: #3f3f3f;
 	--surface-a30: #887d7d;
@@ -73,7 +74,10 @@ input[type=text] {
 }
 
 menu {
-	flex: 1;
+	margin: 8px 5px;
+	padding: 5px;
+	flex-basis: 150px;
+	background-color: color-mix(in srgb, var(--surface-a05) 50%, transparent);
 }
 
 main {
@@ -83,7 +87,7 @@ main {
 	overflow: hidden;
 }
 
-@media (max-width: 450px) {
+@media (max-width: 700px) {
 	.pageContainer {
 		flex-direction: column;
 	}

@@ -203,13 +203,37 @@ def search(
 			show=entry[4],
 			season=entry[5],
 			episode=entry[6],
-			is_movie=entry[7],
-			language=entry[8]
+			language=entry[7],
+			is_movie=entry[8]
 			) for entry in results_unstructured
 		]
 
 	return results
 
+def get_data(db_path:str = COMMON_DB_PATH) -> dict:
+	conn = sqlite3.connect(db_path)	
+	c = conn.cursor()
+
+	data = {}
+
+	c.execute("SELECT DISTINCT language FROM index_to_subtitle")
+	data["languages"] = [row[0] for row in c.fetchall()]
+
+	c.execute("SELECT DISTINCT show FROM index_to_subtitle")
+	data["shows"] = [row[0] for row in c.fetchall()]
+
+	conn.close()
+	return data
+
+def show_seasons(show: str, db_path:str = COMMON_DB_PATH):
+	conn = sqlite3.connect(db_path)
+	c = conn.cursor()
+
+	c.execute("SELECT DISTINCT season FROM index_to_subtitle WHERE show = ?", (show,))
+
+	seasons = [row[0] for row in c.fetchall()]
+
+	return seasons
 
 if __name__ == "__main__":
-	build_on_database(loading_bar=True)
+	show_seasons("Vinland Saga")

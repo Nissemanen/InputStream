@@ -26,7 +26,7 @@ async function loadPage() {
 	try { // incase something goes wrong
 		const data = await getData(currentPage, currentPerPage); // get the results from the search
 
-		displayResults(data.results, data.query_tokens); // display them
+		displayResults(data); // display them
 
 		paginationContainer.innerHTML = "";
 		if(resultsContainer.innerHTML != "") displayPagination(data); // then display the pagination (if there should be any)
@@ -64,9 +64,9 @@ async function getData(page, perPage) {
  * @param {object[]} results an array of the results to display
  * @param {string[]} tokens the tokens to highlight text with
  */
-function displayResults(results, tokens) {
+function displayResults(data) {
 	resultsContainer.innerHTML = "";
-	if (results) results.forEach(entry => {
+	if (data.results) data.results.forEach(entry => {
 		const item = document.createElement("li"); // creates a list item element
 
 		const isoStart = entry.start.replace(",", ".")
@@ -75,13 +75,22 @@ function displayResults(results, tokens) {
 		item.innerHTML = /* some things about this; the '<span lang="ja-jp">...' tells google "this is japanese btw" */`
 			<h3 class="result-name">
 				<span class="result-title">${entry.show}</span>
+				<span class="result-meta">
 				${
-					entry.is_movie ?
-					`<span>Season ${entry.season}, Episode ${entry.episode}</span>` :
-					parseInt(entry.season) > 1 ? 
-					`<span>${entry.season}</span>` :
-					""
+					entry.is_movie ? 
+					(
+						parseInt(entry.season) > 1 ? // if it is a movie, look if the season is bigger then 1 (also parse in just incase)
+						`<span>${entry.season}</span>` : // if so, it isn't the first movie and we add the number
+						"" // else we just dont add anything
+					):
+					( // if it isnt a movie, either add season and episode or just episode
+						data.season_amounts[entry.show].length > 1 ?// then we look if the amount of seasons are greater then 1(same here, parse just incase)
+						`<span class="keep-together">Season ${entry.season},</span>
+						<span class="keep-together">Episode ${entry.episode}</span>` : // if so we print the season
+						`<span class="keep-together">Episode ${entry.episode}</span>` // else, we dont need to print the season, like why print the season when there is only 1
+					)
 				}
+				</span>
 			</h3>
 			<p class="result-text"><span lang="${entry.language}">
 				${entry.text}
@@ -150,8 +159,8 @@ function getUrlState() {
 function pushUrlState(pathname, state, data={}, unused="") {
 	const url = new URL(window.location);
 
-	url.search = ''
-	url.pathname = pathname
+	url.search = '';
+	url.pathname = pathname;
 
 	for (const [key, val] of Object.entries(state)) url.searchParams.set(key, val);
 	
@@ -159,12 +168,48 @@ function pushUrlState(pathname, state, data={}, unused="") {
 }
 
 function displayNothingFound() {
-	resultsContainer.innerHTML = `<p>Nothing found when searching for "${currentQuery}"`
+	resultsContainer.innerHTML = `<p>Nothing found when searching for "${currentQuery}"`;
 }
 
 function handleError(err) {
-	console.log(err)
-	alert(`<p>Error ocured: ${err}`)
+	console.log(err);
+	alert(`<p>Error ocured: ${err}`);
+}
+
+function addFilters(data) {
+	const menu = document.getElementById("filters");
+
+	// Language setings
+	if ('languages' in data) {
+		const langnames = new Map([
+			["en", "English"],
+			["ja-jp", "Japanese"]
+		]);
+
+		const filterSection = document.createElement('section');
+		filterSection.className = 'filterSection';
+		filterSection.innerHTML = '<h3>Languages</h3>';
+
+		const multiCheckboxForm = document.createElement('form');
+		multiCheckboxForm.id = 'multiCheckboxForm';
+		data.languages.forEach(lang => {
+			const inp = document.createElement('input');
+			inp.type = "checkbox";
+			inp.id = lang;
+			inp.value = lang;
+			
+			const lable = document.createElement('label');
+			lable.htmlFor = lang;
+			lable.innerHTML = ' '+langnames.get(lang);
+
+			multiCheckboxForm.appendChild(inp);
+			multiCheckboxForm.appendChild(lable);
+			multiCheckboxForm.appendChild(document.createElement('br'));
+		});
+
+		filterSection.appendChild(multiCheckboxForm);
+		menu.appendChild(filterSection);
+	}
 }
 
 searchForm.addEventListener("submit", async event => {
@@ -173,7 +218,7 @@ searchForm.addEventListener("submit", async event => {
 	currentPage = 1;
 
 	loadPage();
-	pushUrlState("/results", {q:currentQuery, page:currentPage, perPage:currentPerPage})
+	pushUrlState("/results", {q:currentQuery, page:currentPage, perPage:currentPerPage});
 });
 
 headerText.addEventListener("click", function () {
@@ -195,5 +240,8 @@ window.addEventListener("DOMContentLoaded", async () => {
 
 		loadPage();
 	}
+
+	console.log(BACKENDDATA);
+	addFilters(BACKENDDATA);
 });
 
