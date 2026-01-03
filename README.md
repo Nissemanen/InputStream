@@ -2,16 +2,48 @@
 
 I don’t know what to do with the logo 🤔. Guess that comes a nother time
 
-I have no clue on how to make a good README file, nor how to make a good github repo.
-So if anyone has time to help me set it up, please do contact me
-
 ## prerequisites
 
 1. `Python 3.xx` This project was written to fit a python3 standard. We haven't made sure it works in any other version yet.
 2. A web browser (ofc)
-3. Some sort of understanding in using the terminal, or some code editor that can run the backside.
+3. Some sort of understanding in using the terminal
 
 ## Installation
+
+<details>
+<summary>Windows</summary>
+
+1. Clone the repository
+
+   ```batch
+   git clone https://github.com/nissemanen/InputStream.git
+   ```
+
+   or select Code → Download ZIP → extract it
+
+2. Navigate to the project directory and create a virtual environment
+
+   ```batch
+   cd InputStream
+   python -m venv .venv
+   ```
+
+3. Activate the virtual environment
+
+   ```batch
+   .\.venv\Scripts\Activate
+   ```
+
+4. Install packages
+
+   ```batch
+   pip install -r requirements.txt
+   ```
+
+</details>
+
+<details>
+<summary>Linux / MacOS</summary>
 
 1. Clone the repository
 
@@ -21,7 +53,7 @@ So if anyone has time to help me set it up, please do contact me
 
    or select Code → Download ZIP → extract it
 
-2. Navigate to the project directory and create a virtual environment (preferably with python3)
+2. Navigate to the project directory and create a virtual environment
 
    ```bash
    cd InputStream
@@ -29,23 +61,18 @@ So if anyone has time to help me set it up, please do contact me
    ```
 
 3. Activate the virtual environment
-   **Linux/macOS:**
 
    ```bash
    source .venv/bin/activate
    ```
 
-   **Windows:**
-
-   ```batch
-   .\.venv\Scripts\Activate
-   ```
-
 4. Install packages
 
    ```bash
-   pip install -r requirements.txt
+   pip3 install -r requirements.txt
    ```
+
+</details>
 
 ## Usage
 
@@ -53,8 +80,25 @@ Right now, to use InputStream you have to locally self-host it. Partially since 
 
 to start the website is easy, just run the `app.py` script, it is a flask application that will start the website on your computer locally
 
-```bash
+**Windows**
+
+```batch
 python app.py
 ```
 
-you shouldn't need to specify the usage of `python3` to run the script if you use the venv. But if the script doesn't work, try running it with python3
+**Linux / MacO**
+
+```bash
+python3 app.py
+```
+
+information about how to acces it will be spoted in the terminal
+
+ > [!NOTE]
+ > if you want to run it in `debug` mode, just add `--input-stream-debug` as a flag when you run the app
+ >
+ > ```bash
+ > python3 app.py --input-stream-debug
+ > ```
+ >
+ > bash was used in that example, but it works the same in batch, you just add `--input-stream-debug` after the command
