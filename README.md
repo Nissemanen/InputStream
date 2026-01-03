@@ -86,7 +86,7 @@ to start the website is easy, just run the `app.py` script, it is a flask applic
 python app.py
 ```
 
-**Linux / MacO**
+**Linux / MacOS**
 
 ```bash
 python3 app.py
@@ -102,3 +102,4 @@ information about how to acces it will be spoted in the terminal
  > ```
  >
  > bash was used in that example, but it works the same in batch, you just add `--input-stream-debug` after the command
+
