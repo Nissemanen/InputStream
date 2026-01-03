@@ -3,10 +3,12 @@
 .results {
 	list-style-type: none;
 	padding: 8px;
-	overflow: auto;
+	overflow-y: auto;
+	overflow-x: hidden;
 	flex: 1;
 	opacity: 1;
 	transition: opacity 0.5s ease-in-out;
+	min-height: 0;
 }
 
 .search {
@@ -27,10 +29,7 @@
 	transform: translateY(calc((50vh - 80px) - 50% - 8px));
 	opacity: 0;
 	transition: opacity 0.5s ease-in-out;
-}
-
-main {
-	position: relative;
+	text-wrap: nowrap;
 }
 
 main:has(.results:empty) .search {
@@ -52,7 +51,7 @@ main:has(.results:empty) hr {
 
 main:has(.results:empty) .hero {
 	opacity: 1;
-	text-wrap: nonwrap;
+	text-wrap: wrap;
 	overflow-x: clip;
 }
 
