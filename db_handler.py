@@ -150,6 +150,9 @@ def search(
 		excluded_shows: list[str]|None = None,
 		seasons: list[int]|None = None,
 		episodes: list[int]|None = None,
+		languages: list[str]|None = None,
+		movies_only: bool = False,
+		series_only: bool = False,
 		exact_match: bool = False,
 		db_path: str = COMMON_DB_PATH
 		) -> list[WordEntry]:
@@ -189,7 +192,14 @@ def search(
 		query += f" AND s.episode IN ({', '.join(['?' for i in range(len(episodes))])})"
 		parameters += episodes
 
-	print(f"log:\n	querry: {query}\n	parameters: {parameters}")
+	if languages:
+		query += f" AND s.language IN ({', '.join(['?' for i in range(len(languages))])})"
+		parameters += languages
+
+	print(f"log:")
+	print("  query:	", '\n    '.join([thing.strip() for thing in query.split("\n")]))
+	print(f"  parameters: {parameters}\n")
+	
 	c.execute(query, parameters)
 
 	results_unstructured = c.fetchall()
@@ -236,4 +246,4 @@ def show_seasons(show: str, db_path:str = COMMON_DB_PATH):
 	return seasons
 
 if __name__ == "__main__":
-	show_seasons("Vinland Saga")
+	print("how dat happen")

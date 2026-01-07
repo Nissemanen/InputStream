@@ -79,9 +79,7 @@ menu {
 	margin: 8px 5px;
 	padding: 5px;
 	background-color: color-mix(in srgb, var(--surface-a05) 50%, transparent);
-	flex-basis: 100px;
-	flex-shrink: 0;
-	flex-grow: 1;
+	flex-basis: 175px;
 }
 
 main {

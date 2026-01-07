@@ -13,6 +13,11 @@ const headerText = document.getElementById("headerText"); // the text in the hea
 let currentPage = 1;
 let currentQuery = "";
 let currentPerPage = 20;
+let filters = {
+	languages: [],
+}
+let languageName = new Intl.DisplayNames(['en'], {type: 'language'});
+
 
 
 /** simply "loads" the page. In reality it just changes the page based on the state */
@@ -49,7 +54,8 @@ async function getData(page, perPage) {
 		body: JSON.stringify({ //self explainitory
 			query: currentQuery,
 			page: page,
-			per_page: perPage
+			per_page: perPage,
+			filters: filters
 		})
 	});
 	if (!response.ok) {
@@ -93,7 +99,7 @@ function displayResults(data) {
 				</span>
 			</h3>
 			<p class="result-text"><span lang="${entry.language}">
-				${entry.text}
+				${entry.text.replace("\n", "<br>")}
 			</span></p>
 			<small class="result-time">
 				(from
@@ -179,36 +185,53 @@ function handleError(err) {
 function addFilters(data) {
 	const menu = document.getElementById("filters");
 
+	if (filters.length > 0) {
+
+	}
+
 	// Language setings
 	if ('languages' in data) {
-		const langnames = new Map([
-			["en", "English"],
-			["ja-jp", "Japanese"]
-		]);
-
 		const filterSection = document.createElement('section');
 		filterSection.className = 'filterSection';
 		filterSection.innerHTML = '<h3>Languages</h3>';
 
 		const multiCheckboxForm = document.createElement('form');
-		multiCheckboxForm.id = 'multiCheckboxForm';
+		multiCheckboxForm.id = 'multi-checkbox-form';
 		data.languages.forEach(lang => {
 			const inp = document.createElement('input');
 			inp.type = "checkbox";
 			inp.id = lang;
 			inp.value = lang;
-			
-			const lable = document.createElement('label');
-			lable.htmlFor = lang;
-			lable.innerHTML = ' '+langnames.get(lang);
+			inp.className = "filter-checkbox";
 
-			multiCheckboxForm.appendChild(inp);
+			const lable = document.createElement('label');
+			lable.className = "checkbox-container";
+			lable.appendChild(inp);
+			lable.innerHTML += ' '+languageName.of(lang);
+			
+			lable.onchange = (event) => {
+				if (event.target.checked) {
+					if (!filters.languages.includes(lang)) filters.languages.push(lang);
+				} else {
+					if (filters.languages.includes(lang)) filters.languages.splice(filters.languages.indexOf(lang), 1);
+				}
+				console.log(filters);
+			};
+
 			multiCheckboxForm.appendChild(lable);
 			multiCheckboxForm.appendChild(document.createElement('br'));
 		});
 
 		filterSection.appendChild(multiCheckboxForm);
 		menu.appendChild(filterSection);
+
+		const hrThing = document.createElement('hr');
+		hrThing.className = "filter-hr";
+		menu.appendChild(hrThing);
+	}
+
+	if ('shows' in data) {
+
 	}
 }
 

@@ -35,6 +35,7 @@ def do_search():
 	page = flask.request.json.get("page", 1)
 	per_page = flask.request.json.get("per_page", 20)
 	highlight_method: str = flask.request.json.get("highlight_method", "")
+	filters: dict = flask.request.json.get("filters", {});
 	
 	if query == "":
 		return flask.jsonify({"results":[], "has_more":False, "query_tokens":[]})
@@ -42,10 +43,21 @@ def do_search():
 	print("===")
 	print(f"doing {query}")
 	print(f"splitted: {tokenize(query)}")
-	results = search(query)
+	print(f"filters: {filters}")
+	results = search(
+		query,
+		included_shows=filters.get("included_shows"),
+		excluded_shows=filters.get("excluded_shows"),
+		seasons=filters.get("seasons"),
+		episodes=filters.get("episodes"),
+		languages=filters.get("languages"),
+		movies_only=filters.get("movies_only", False),
+		series_only=filters.get("series_only", False),
+		exact_match=filters.get("exact_match", False)
+		)
 	tokenized = tokenize(query)
 
-	results_list = [
+	return_list = [
 		{
 			'text': generate_highlights(r.text, tokenized, highlight_method),
 			'show': r.show,
@@ -56,19 +68,15 @@ def do_search():
 			'is_movie': r.is_movie,
 			'language': r.language
 		}
-		for r in results
+		for r in results[per_page * (page-1):per_page*page]
 	]
 
-	return_list = results_list[per_page * (page-1):per_page * page]
-
-	# print(flask.jsonify(return_list))
-	# print(f"{per_page * (page-1)}:{per_page * page}")
-	# print(len(results_list))
+	print("===")
 
 	return flask.jsonify(
 		{
 			"results": return_list, 
-			"has_more": (len(results_list)-per_page*page)/20 > 0, 
+			"has_more": (len(results)-per_page*page)/20 > 0, 
 			"season_amounts": {
 				show:show_seasons(show) # this just uses the unique names in the set below
 				for show in {entry["show"] for entry in return_list} # this gets every unique show name in a set

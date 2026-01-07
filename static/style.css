@@ -67,6 +67,10 @@ main:has(.results:empty) .hero {
 .result-text { padding-left: 16px; }
 .result-time { color: var(--text-small); }
 
+.keep-together {
+	white-space: nowrap;
+}
+
 ::-webkit-scrollbar {
 	width: 10px;
 }
