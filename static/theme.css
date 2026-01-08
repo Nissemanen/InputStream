@@ -27,7 +27,7 @@ h1 {
 	margin: 0.67em 0;
 	color: var(--primary-a0);
 }
-h2 { color: var(--primary-a10);}
+h2 { color: var(--primary-a10); }
 h3 { color: var(--primary-a20); }
 h1, h2, h3 { line-height: 1.1; }
 main { padding: 8px; }
@@ -77,7 +77,7 @@ input[type=text] {
 
 menu {
 	margin: 8px 5px;
-	padding: 5px;
+	padding: 7px;
 	background-color: color-mix(in srgb, var(--surface-a05) 50%, transparent);
 	flex-basis: 175px;
 }

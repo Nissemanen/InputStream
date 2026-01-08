@@ -185,8 +185,8 @@ function handleError(err) {
 function addFilters(data) {
 	const menu = document.getElementById("filters");
 
-	if (filters.length > 0) {
-
+	if (filters.length < 0) {
+		return;
 	}
 
 	// Language setings
@@ -226,7 +226,7 @@ function addFilters(data) {
 		menu.appendChild(filterSection);
 
 		const hrThing = document.createElement('hr');
-		hrThing.className = "filter-hr";
+		hrThing.className = "filterSeperator";
 		menu.appendChild(hrThing);
 	}
 
@@ -241,7 +241,8 @@ searchForm.addEventListener("submit", async event => {
 	currentPage = 1;
 
 	loadPage();
-	pushUrlState("/results", {q:currentQuery, page:currentPage, perPage:currentPerPage});
+	if (currentQuery == "") pushUrlState("/", {})
+	else pushUrlState("/results", {q:currentQuery, page:currentPage, perPage:currentPerPage});
 });
 
 headerText.addEventListener("click", function () {

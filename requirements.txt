@@ -1,4 +1,3 @@
 Janome
 Flask
 tqdm
-furigana
