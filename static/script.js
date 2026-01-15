@@ -15,6 +15,7 @@ let currentQuery = "";
 let currentPerPage = 20;
 let filters = {
 	languages: [],
+	included_shows: [],
 }
 let languageName = new Intl.DisplayNames(['en'], {type: 'language'});
 
@@ -45,9 +46,10 @@ async function loadPage() {
 /** gets the data for the current search
  * @param {number} page - page number
  * @param {number} perPage - how many results wanted back
+ * @
  * @returns {Promise<object[]>}
  */
-async function getData(page, perPage) {
+async function getData(page, perPage, type) {
 	const response = await fetch("/search", { //send the fetch request, this goes to the backend "/search" request.
 		method: "POST", // this tells the backend "im gonna send data and i want some back"
 		headers: { "Content-Type": "application/json" }, // this tells the backend that the data is json
@@ -72,7 +74,7 @@ async function getData(page, perPage) {
  */
 function displayResults(data) {
 	resultsContainer.innerHTML = "";
-	if (data.results) data.results.forEach(entry => {
+	if (data != undefined) data.results.forEach(entry => {
 		const item = document.createElement("li"); // creates a list item element
 
 		const isoStart = entry.start.replace(",", ".")
@@ -189,10 +191,12 @@ function addFilters(data) {
 		return;
 	}
 
+	let i = 1;
+
 	// Language setings
 	if ('languages' in data) {
 		const filterSection = document.createElement('section');
-		filterSection.className = 'filterSection';
+		filterSection.className = 'filter-section';
 		filterSection.innerHTML = '<h3>Languages</h3>';
 
 		const multiCheckboxForm = document.createElement('form');
@@ -204,12 +208,12 @@ function addFilters(data) {
 			inp.value = lang;
 			inp.className = "filter-checkbox";
 
-			const lable = document.createElement('label');
-			lable.className = "checkbox-container";
-			lable.appendChild(inp);
-			lable.innerHTML += ' '+languageName.of(lang);
+			const label = document.createElement('label');
+			label.className = "checkbox-container";
+			label.appendChild(inp);
+			label.innerHTML += ` <span class="filter-checkbox-text">${languageName.of(lang)}</span>`;
 			
-			lable.onchange = (event) => {
+			label.onchange = (event) => {
 				if (event.target.checked) {
 					if (!filters.languages.includes(lang)) filters.languages.push(lang);
 				} else {
@@ -218,21 +222,64 @@ function addFilters(data) {
 				console.log(filters);
 			};
 
-			multiCheckboxForm.appendChild(lable);
+			multiCheckboxForm.appendChild(label);
 			multiCheckboxForm.appendChild(document.createElement('br'));
 		});
 
 		filterSection.appendChild(multiCheckboxForm);
 		menu.appendChild(filterSection);
 
-		const hrThing = document.createElement('hr');
-		hrThing.className = "filterSeperator";
-		menu.appendChild(hrThing);
+		if (Object.keys(data).length > i) {
+			const hrThing = document.createElement('hr');
+			hrThing.className = "filter-seperator";
+			menu.appendChild(hrThing);
+		}
+		i++;
 	}
 
 	if ('shows' in data) {
+		const filterSection = document.createElement('section');
+		filterSection.className = 'filter-section';
+		filterSection.innerHTML = '<h3>Included Shows</h3>';
 
+		const multiCheckboxForm = document.createElement('form');
+		multiCheckboxForm.id = 'multi-checkbox-form';
+		data.shows.forEach(show => {
+			const inp = document.createElement('input');
+			inp.type = "checkbox";
+			inp.id = show;
+			inp.value = show;
+			inp.className = "filter-checkbox";
+			
+			const label = document.createElement('label');
+			label.className = "checkbox-container";
+			label.appendChild(inp);
+			label.innerHTML += ` <span class="filter-checkbox-text">${show}</span>`;
+
+			label.onchange = (event) => {
+				if (event.target.checked) {
+					if (!filters.included_shows.includes(show)) filters.included_shows.push(show);
+				} else {
+					if (filters.included_shows.includes(show)) filters.included_shows.splice(filters.included_shows.indexOf(show), 1);
+				}
+				console.log(filters);
+			};
+
+			multiCheckboxForm.appendChild(label);
+			multiCheckboxForm.appendChild(document.createElement('br'));
+		});
+
+		filterSection.appendChild(multiCheckboxForm);
+		menu.appendChild(filterSection);
+
+		if (Object.keys(data).length > i) {
+			const hrThing = document.createElement('hr');
+			hrThing.className = "filter-seperator";
+			menu.appendChild(hrThing);
+		}
+		i++;
 	}
+	console.log(menu);
 }
 
 searchForm.addEventListener("submit", async event => {
