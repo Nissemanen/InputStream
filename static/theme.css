@@ -90,9 +90,3 @@ main {
 	min-height: 0;
 	flex: 10;
 }
-
-@media (max-width: 700px) {
-	.pageContainer {
-		flex-direction: column;
-	}
-}

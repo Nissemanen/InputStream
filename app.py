@@ -5,6 +5,7 @@ import re
 
 app = flask.Flask(__name__)
 
+filters: dict = {}
 
 def generate_highlights(text: str, tokens: list[str], highlight_method: str = "") -> str:
 	if not highlight_method:
@@ -35,12 +36,16 @@ def do_search():
 	page = flask.request.json.get("page", 1)
 	per_page = flask.request.json.get("per_page", 20)
 	highlight_method: str = flask.request.json.get("highlight_method", "")
-	filters: dict = flask.request.json.get("filters", {});
+	if flask.request.json.get("type") == "search":
+		globals()["filters"] = flask.request.json.get("filters", {});
+	filters = globals()["filters"]
 	
 	if query == "":
 		return flask.jsonify({"results":[], "has_more":False, "query_tokens":[]})
 
 	print("===")
+	print("request json:", flask.request.json)
+	print(f"filters: {filters}")
 	print(f"doing {query}")
 	print(f"splitted: {tokenize(query)}")
 	print(f"filters: {filters}")

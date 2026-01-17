@@ -35,7 +35,7 @@
 main:has(.results:empty) .search {
 	transform: translate(
 		/* 80px is the header height */
-		calc(50vw - 50%),
+		calc(50cqw/2),
 		calc((50vh - 80px) - 50%)
 	);
 }
@@ -67,23 +67,6 @@ main:has(.results:empty) .hero {
 .result-text { padding-left: 16px; }
 .result-time { color: var(--text-small); }
 
-::-webkit-scrollbar {
-	width: 10px;
-}
-
-::-webkit-scrollbar-track {
-	background: var(--surface-a30);
-	border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb {
-	background: var(--primary-a10);
-	border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-	background: var(--primary-a20);
-}
 
 /* Filters things */
 
@@ -103,4 +86,30 @@ main:has(.results:empty) .hero {
 
 .keep-together {
 	white-space: nowrap;
+}
+
+/* Other general site styling */
+
+@media (max-width: 700px) {
+	.pageContainer {
+		flex-direction: column;
+	}
+}
+
+::-webkit-scrollbar {
+	width: 10px;
+}
+
+::-webkit-scrollbar-track {
+	background: var(--surface-a30);
+	border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+	background: var(--primary-a10);
+	border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: var(--primary-a20);
 }

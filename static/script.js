@@ -22,7 +22,7 @@ let languageName = new Intl.DisplayNames(['en'], {type: 'language'});
 
 
 /** simply "loads" the page. In reality it just changes the page based on the state */
-async function loadPage() {
+async function loadPage(type) {
 	if (currentQuery == "") {
 		paginationContainer.innerHTML = "";
 		displayResults();
@@ -30,7 +30,7 @@ async function loadPage() {
 	}
 
 	try { // incase something goes wrong
-		const data = await getData(currentPage, currentPerPage); // get the results from the search
+		const data = await getData(currentPage, currentPerPage, type); // get the results from the search
 
 		displayResults(data); // display them
 
@@ -46,7 +46,7 @@ async function loadPage() {
 /** gets the data for the current search
  * @param {number} page - page number
  * @param {number} perPage - how many results wanted back
- * @
+ * @param {string} type - what type of search it is, either "search" or "page-change"
  * @returns {Promise<object[]>}
  */
 async function getData(page, perPage, type) {
@@ -57,7 +57,8 @@ async function getData(page, perPage, type) {
 			query: currentQuery,
 			page: page,
 			per_page: perPage,
-			filters: filters
+			filters: filters,
+			type: type
 		})
 	});
 	if (!response.ok) {
@@ -123,7 +124,7 @@ function displayPagination(data) {
 		prevButton.textContent = "Previous";
 		prevButton.onclick = () => { // add thing on click function
 			currentPage--;
-			loadPage();
+			loadPage("page-change");
 		};
 		paginationContainer.appendChild(prevButton);
 	}
@@ -137,7 +138,7 @@ function displayPagination(data) {
 		nextButton.textContent = "Next";
 		nextButton.onclick = () => {
 			currentPage++;
-			loadPage();
+			loadPage("page-change");
 		};
 		paginationContainer.appendChild(nextButton);
 	}
@@ -287,7 +288,7 @@ searchForm.addEventListener("submit", async event => {
 	currentQuery = searchQuery.value;
 	currentPage = 1;
 
-	loadPage();
+	loadPage("search");
 	if (currentQuery == "") pushUrlState("/", {})
 	else pushUrlState("/results", {q:currentQuery, page:currentPage, perPage:currentPerPage});
 });
@@ -296,7 +297,7 @@ headerText.addEventListener("click", function () {
 	searchQuery.value = "";
 	currentQuery = "";
 
-	loadPage();
+	loadPage("search");
 	pushUrlState("/", {});
 });
 
@@ -309,7 +310,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 		currentPerPage = parseInt(params.perPage) || 20;
 		searchQuery.value = currentQuery;
 
-		loadPage();
+		loadPage("search");
 	}
 
 	console.log(BACKENDDATA);
