@@ -78,7 +78,7 @@ I don’t know what to do with the logo 🤔. Guess that comes a nother time
 
 Right now, to use InputStream you have to locally self-host it. Partially since i dont have any dedicated servers, or any domain to connect it to
 
-to start the website is easy, just run the `app.py` script, it is a flask application that will start the website on your computer locally
+to start the website is easy, just run the `app.py` script (Make sure that the Virtual environment is activated ), it is a flask application that will start the website on your computer locally
 
 **Windows**
 
@@ -102,4 +102,3 @@ information about how to acces it will be spoted in the terminal
  > ```
  >
  > bash was used in that example, but it works the same in batch, you just add `--input-stream-debug` after the command
-

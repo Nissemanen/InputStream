@@ -4,8 +4,8 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>InputStream</title>
-		<link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
 		<link href="{{ url_for('static', filename='theme.css') }}" rel="stylesheet">
+		<link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
 	</head>
 	<body>
 		<header>
@@ -32,9 +32,10 @@
 				<hr>
 
 				<ol id="results" class="results"></ol>
-				<div id="pagination" class="pagination"></div>
 			</main>
 		</div>
+		
+		<div id="pagination" class="pagination"></div>
 		
 		<script>const BACKENDDATA = {{ data | tojson  }};</script>
 		<script src="{{ url_for('static', filename='script.js') }}"></script>
