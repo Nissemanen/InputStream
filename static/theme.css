@@ -20,10 +20,9 @@
 
 hr { 
 	margin: 0.5em;
-	background-color: #d93452;
-	height: 100%;
+	background-color: var(--surface-a30);
+	height: 1px;
 	border: none;
-	width: 100%;
 }
 h1 {
 	margin: 0.67em 0;
