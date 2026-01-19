@@ -195,6 +195,9 @@ def search(
 	if languages:
 		query += f" AND s.language IN ({', '.join(['?' for i in range(len(languages))])})"
 		parameters += languages
+	
+	if movies_only:
+		query += " AND s.is_movie = TRUE"
 
 	print(f"log:")
 	print("  query:	", '\n    '.join([thing.strip() for thing in query.split("\n")]))
@@ -220,7 +223,7 @@ def search(
 
 	return results
 
-def get_data(db_path:str = COMMON_DB_PATH) -> dict:
+def get_data(db_path:str = COMMON_DB_PATH, from_word_entries: None|list[WordEntry] = None) -> dict:
 	conn = sqlite3.connect(db_path)	
 	c = conn.cursor()
 
