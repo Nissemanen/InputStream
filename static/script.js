@@ -19,6 +19,8 @@ let filters = {
 }
 let languageName = new Intl.DisplayNames(['en'], {type: 'language'});
 
+// havent decided on these yet, so they'll just be some switches for ease of turning on/off
+const instant_filter_action = true;
 
 
 /** simply "loads" the page. In reality it just changes the page based on the state */
@@ -26,13 +28,17 @@ async function loadPage(type) {
 	if (currentQuery == "") {
 		paginationContainer.innerHTML = "";
 		displayResults();
+		addFilters(BACKENDDATA);
 		return;
 	}
 
 	try { // incase something goes wrong
 		const data = await getData(currentPage, currentPerPage, type); // get the results from the search
 
+		currentPage = data.page;
+
 		displayResults(data); // display them
+		addFilters(data.filters);
 
 		paginationContainer.innerHTML = "";
 		if(resultsContainer.innerHTML != "") displayPagination(data); // then display the pagination (if there should be any)
@@ -188,6 +194,8 @@ function handleError(err) {
 function addFilters(data) {
 	const menu = document.getElementById("filters");
 
+	menu.innerHTML = `<h2>Filters</h2><hr class="filter-seperator"></hr>`
+
 	if (filters.length < 0) {
 		return;
 	}
@@ -208,9 +216,13 @@ function addFilters(data) {
 			inp.id = lang;
 			inp.value = lang;
 			inp.className = "filter-checkbox";
+			inp.checked = filters.languages.includes(lang);
+
+			console.log(inp.checked);
+			console.log(filters.languages);
 
 			const label = document.createElement('label');
-			label.className = "checkbox-container";
+			label.className = "filter-checkbox-container";
 			label.appendChild(inp);
 			label.innerHTML += ` <span class="filter-checkbox-text">${languageName.of(lang)}</span>`;
 			
@@ -220,6 +232,13 @@ function addFilters(data) {
 				} else {
 					if (filters.languages.includes(lang)) filters.languages.splice(filters.languages.indexOf(lang), 1);
 				}
+
+				if (instant_filter_action) {
+					loadPage("search");
+					if (currentQuery == "") pushUrlState("/", {})
+					else pushUrlState("/results", {q:currentQuery, page:currentPage, perPage:currentPerPage});
+				}
+				
 				console.log(filters);
 			};
 
@@ -263,6 +282,13 @@ function addFilters(data) {
 				} else {
 					if (filters.included_shows.includes(show)) filters.included_shows.splice(filters.included_shows.indexOf(show), 1);
 				}
+
+				if (instant_filter_action) {
+					loadPage("search");
+					if (currentQuery == "") pushUrlState("/", {})
+					else pushUrlState("/results", {q:currentQuery, page:currentPage, perPage:currentPerPage});
+				}
+
 				console.log(filters);
 			};
 

@@ -1,3 +1,7 @@
+header h1 {
+	cursor: pointer;
+}
+
 .results li { margin-bottom: 16px; }
 
 .results {
@@ -111,6 +115,10 @@ main:has(.results:empty) {
 
 .keep-together {
 	white-space: nowrap;
+}
+
+.filter-checkbox-container.no_results {
+	color: var(--text-small)
 }
 
 /* Other general site styling */

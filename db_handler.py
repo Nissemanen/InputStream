@@ -155,14 +155,13 @@ def search(
 		series_only: bool = False,
 		exact_match: bool = False,
 		db_path: str = COMMON_DB_PATH
-		) -> list[WordEntry]:
+		) -> tuple[list[WordEntry], dict]:
 	conn = sqlite3.connect(db_path)
 	c = conn.cursor()
 
 	splitted_search: list[str] = tokenize(search)
 
 	query = f"""
-	SELECT DISTINCT s.*
 	FROM index_to_subtitle s
 	{' '.join([f'INNER JOIN word_to_index w{i} ON s.id = w{i}.subtitle_id' for i in range(len(splitted_search))])}
 	WHERE {' AND '.join([f'LOWER(w{i}.word) = LOWER(?)' for i in range(len(splitted_search))])}
@@ -203,7 +202,7 @@ def search(
 	print("  query:	", '\n    '.join([thing.strip() for thing in query.split("\n")]))
 	print(f"  parameters: {parameters}\n")
 	
-	c.execute(query, parameters)
+	c.execute(f"SELECT DISTINCT s.* {query}", parameters)
 
 	results_unstructured = c.fetchall()
 
@@ -221,18 +220,26 @@ def search(
 			) for entry in results_unstructured
 		]
 
-	return results
+	return results, get_data(special_params={query:parameters})
 
-def get_data(db_path:str = COMMON_DB_PATH, from_word_entries: None|list[WordEntry] = None) -> dict:
+def get_data(db_path:str = COMMON_DB_PATH, special_params: dict[str, list]|None=None) -> dict:
 	conn = sqlite3.connect(db_path)	
 	c = conn.cursor()
 
 	data = {}
 
-	c.execute("SELECT DISTINCT language FROM index_to_subtitle")
+	print(special_params)
+
+	when_text = "FROM index_to_subtitle s" if not isinstance(special_params, dict) else list(special_params.keys())[0]
+	when_params = () if not isinstance(special_params, dict) else list(special_params.values())[0]
+
+	print(f'"{when_text}"')
+	print(when_params)
+
+	c.execute(f"SELECT DISTINCT s.language {when_text}", when_params)
 	data["languages"] = [row[0] for row in c.fetchall()]
 
-	c.execute("SELECT DISTINCT show FROM index_to_subtitle")
+	c.execute(f"SELECT DISTINCT s.show {when_text}", when_params)
 	data["shows"] = [row[0] for row in c.fetchall()]
 
 	conn.close()

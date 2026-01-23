@@ -1,6 +1,7 @@
 from db_handler import search, WordEntry, tokenize, get_data, show_seasons
 import clip_extracter as clipper
 import flask
+import math
 import re
 
 app = flask.Flask(__name__)
@@ -49,7 +50,7 @@ def do_search():
 	print(f"doing {query}")
 	print(f"splitted: {tokenize(query)}")
 	print(f"filters: {filters}")
-	results = search(
+	results, avaliabe_filters = search(
 		query,
 		included_shows=filters.get("included_shows"),
 		excluded_shows=filters.get("excluded_shows"),
@@ -62,6 +63,8 @@ def do_search():
 		)
 	tokenized = tokenize(query)
 
+	if page > math.ceil(len(results)/per_page):	page = math.ceil(len(results)/per_page)
+	
 	return_list = [
 		{
 			'text': generate_highlights(r.text, tokenized, highlight_method),
@@ -85,7 +88,9 @@ def do_search():
 			"season_amounts": {
 				show:show_seasons(show) # this just uses the unique names in the set below
 				for show in {entry["show"] for entry in return_list} # this gets every unique show name in a set
-				}
+				},
+			"filters": avaliabe_filters,
+			"page": page
 		}
 	)
 
