@@ -236,13 +236,14 @@ def get_data(db_path:str = COMMON_DB_PATH, special_params: dict[str, list]|None=
 	print(f'"{when_text}"')
 	print(when_params)
 
-	c.execute(f"SELECT DISTINCT s.language {when_text}", when_params)
-	data["languages"] = [row[0] for row in c.fetchall()]
+	c.execute(f"SELECT s.language, COUNT(*) as count {when_text} GROUP BY s.language", when_params)
+	data["languages"] = [{"lang":row[0], "count":row[1]} for row in c.fetchall()]
 
-	c.execute(f"SELECT DISTINCT s.show {when_text}", when_params)
-	data["shows"] = [row[0] for row in c.fetchall()]
+	c.execute(f"SELECT s.show, COUNT(*) as count {when_text} GROUP BY s.show", when_params)
+	data["shows"] = [{"show":row[0], "count":row[1]} for row in c.fetchall()]
 
 	conn.close()
+	print(data)
 	return data
 
 def show_seasons(show: str, db_path:str = COMMON_DB_PATH):
@@ -253,6 +254,7 @@ def show_seasons(show: str, db_path:str = COMMON_DB_PATH):
 
 	seasons = [row[0] for row in c.fetchall()]
 
+	conn.close()
 	return seasons
 
 if __name__ == "__main__":

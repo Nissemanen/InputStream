@@ -187,7 +187,7 @@ function displayNothingFound() {
 }
 
 function handleError(err) {
-	console.log(err);
+	console.log("err", err);
 	alert(`<p>Error ocured: ${err}`);
 }
 
@@ -202,7 +202,6 @@ function addFilters(data) {
 
 	let i = 1;
 
-	// Language setings
 	if ('languages' in data) {
 		const filterSection = document.createElement('section');
 		filterSection.className = 'filter-section';
@@ -210,36 +209,34 @@ function addFilters(data) {
 
 		const multiCheckboxForm = document.createElement('form');
 		multiCheckboxForm.id = 'multi-checkbox-form';
-		data.languages.forEach(lang => {
+
+		BACKENDDATA.languages.forEach(lang_obj => {
+			const count = data.languages.some(item => item.lang === lang_obj.lang) ? data.languages.find(item => item.lang === lang_obj.lang).count : 0
+
 			const inp = document.createElement('input');
 			inp.type = "checkbox";
-			inp.id = lang;
-			inp.value = lang;
+			inp.id = lang_obj.lang;
+			inp.value = lang_obj.lang;
 			inp.className = "filter-checkbox";
-			inp.checked = filters.languages.includes(lang);
-
-			console.log(inp.checked);
-			console.log(filters.languages);
+			inp.checked = filters.languages.includes(lang_obj.lang);
 
 			const label = document.createElement('label');
 			label.className = "filter-checkbox-container";
+			if (count == 0) label.classList.add("no_results");
 			label.appendChild(inp);
-			label.innerHTML += ` <span class="filter-checkbox-text">${languageName.of(lang)}</span>`;
-			
+			label.innerHTML += ` <span class="filter-checkbox-text">${languageName.of(lang_obj.lang)}</span> <small class="filter-ocurance">${count}</small>`;
+
 			label.onchange = (event) => {
-				if (event.target.checked) {
-					if (!filters.languages.includes(lang)) filters.languages.push(lang);
-				} else {
-					if (filters.languages.includes(lang)) filters.languages.splice(filters.languages.indexOf(lang), 1);
-				}
+				if (event.target.checked) { if (!filters.languages.includes(lang_obj.lang)) filters.languages.push(lang_obj.lang); }
+				else { if (filters.languages.includes(lang_obj.lang)) filters.languages.splice(filters.languages.indexOf(lang_obj.lang), 1); }
 
 				if (instant_filter_action) {
 					loadPage("search");
-					if (currentQuery == "") pushUrlState("/", {})
+					if (currentQuery == "") pushUrlState("/", {});
 					else pushUrlState("/results", {q:currentQuery, page:currentPage, perPage:currentPerPage});
 				}
-				
-				console.log(filters);
+
+				console.log("filters:", filters);
 			};
 
 			multiCheckboxForm.appendChild(label);
@@ -264,23 +261,31 @@ function addFilters(data) {
 
 		const multiCheckboxForm = document.createElement('form');
 		multiCheckboxForm.id = 'multi-checkbox-form';
-		data.shows.forEach(show => {
+
+		BACKENDDATA.shows.forEach(show_obj => {
+			const count = data.shows.some(item => item.show === show_obj.show) ? data.shows.find(item => item.show === show_obj.show).count : 0
+
 			const inp = document.createElement('input');
 			inp.type = "checkbox";
-			inp.id = show;
-			inp.value = show;
+			inp.id = show_obj.show;
+			inp.value = show_obj.show;
 			inp.className = "filter-checkbox";
+			inp.checked = filters.included_shows.includes(show_obj.show) ? "true" : null;
+			console.log(`${show_obj.show} checked: ${filters.included_shows.includes(show_obj.show)}`);
 			
 			const label = document.createElement('label');
-			label.className = "checkbox-container";
+			label.className = "filter-checkbox-container";
+			if (count == 0) label.classList.add("no_results");
+			console.log(`${show_obj.show} count:`, count);
 			label.appendChild(inp);
-			label.innerHTML += ` <span class="filter-checkbox-text">${show}</span>`;
+			label.checked = filters.included_shows.includes(show_obj.show) ? "true" : null;
+			label.innerHTML += ` <span class="filter-checkbox-text">${show_obj.show}</span> <small class="filter-ocurance">${count}</small>`;
 
 			label.onchange = (event) => {
 				if (event.target.checked) {
-					if (!filters.included_shows.includes(show)) filters.included_shows.push(show);
+					if (!filters.included_shows.includes(show_obj.show)) filters.included_shows.push(show_obj.show);
 				} else {
-					if (filters.included_shows.includes(show)) filters.included_shows.splice(filters.included_shows.indexOf(show), 1);
+					if (filters.included_shows.includes(show_obj.show)) filters.included_shows.splice(filters.included_shows.indexOf(show_obj.show), 1);
 				}
 
 				if (instant_filter_action) {
@@ -289,7 +294,7 @@ function addFilters(data) {
 					else pushUrlState("/results", {q:currentQuery, page:currentPage, perPage:currentPerPage});
 				}
 
-				console.log(filters);
+				console.log("filters", filters);
 			};
 
 			multiCheckboxForm.appendChild(label);
@@ -306,7 +311,7 @@ function addFilters(data) {
 		}
 		i++;
 	}
-	console.log(menu);
+	console.log("menu", menu);
 }
 
 searchForm.addEventListener("submit", async event => {
@@ -339,7 +344,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 		loadPage("search");
 	}
 
-	console.log(BACKENDDATA);
+	console.log("backenddata:", BACKENDDATA);
 	addFilters(BACKENDDATA);
 });
 
